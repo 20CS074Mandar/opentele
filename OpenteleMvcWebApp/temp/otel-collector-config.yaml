@@ -1,0 +1,26 @@
+receivers:
+  zipkin:
+  otlp:
+    protocols:
+      http:
+      grpc:
+exporters:
+  zipkin:
+    endpoint: "http:zipkin:9411/api/v2/spans"
+  logging:
+    loglevel: debug
+processors:
+  batch:
+extensions:
+   heath_check:
+service:
+  extensions: [heath_check]
+  pipelines:
+    traces:
+      receivers: [zipkin,otlp]
+      exporters: [zipkin]
+      processors: [batch]
+    metrics:
+      receivers: [zipkin,otlp]
+      exporters: [zipkin,logging]
+      processors: [batch]
